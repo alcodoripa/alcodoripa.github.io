@@ -493,8 +493,8 @@
     </div>
     <div class="header-text">
       <div class="badge-status"><span class="dot"></span>Disponible para proyectos</div>
-      <h1>Hola, soy <span>Pablo</span> 👋</h1>
-      <p class="subtitle">Ingeniero de Software · <span class="highlight">Full Stack</span> · Builder</p>
+      <h1>Hola, soy <span>Pablo Alcodori Muñoz</span> 👋</h1>
+      <p class="subtitle">Ingeniero En Telemática · <span class="highlight">Full Stack</span> · Builder</p>
       <div class="typing-wrap">
         <span>→</span>
         <span class="typing">Building cool stuff</span>
@@ -528,68 +528,7 @@
     <span class="skill-tag warm">🧠 LLMs</span>
   </div>
 
-  <!-- ── GIF SHOWCASE ── -->
-  <p class="section-title">// En modo flujo</p>
-  <div class="gif-row">
-    <div class="gif-card">
-      <img src="https://media.giphy.com/media/L1R1tvI9svkIWwpVYr/giphy.gif" alt="coding gif" />
-      <div class="gif-label">Coding 24/7</div>
-    </div>
-    <div class="gif-card">
-      <img src="https://media.giphy.com/media/ZVik7pIojecu0/giphy.gif" alt="matrix gif" />
-      <div class="gif-label">The Matrix</div>
-    </div>
-    <div class="gif-card">
-      <img src="https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" alt="hacking gif" />
-      <div class="gif-label">Deploy → Prod</div>
-    </div>
-  </div>
-
-  <!-- ── PROJECTS ── -->
-  <p class="section-title">// Proyectos destacados</p>
-  <div class="projects-grid">
-    <div class="proj-card">
-      <div class="proj-header">
-        <span class="proj-icon">🚀</span>
-        <span class="proj-lang"><span class="lang-dot" style="background:#3178c6"></span> TypeScript</span>
-      </div>
-      <div class="proj-name">pablo-api-core</div>
-      <div class="proj-desc">Framework REST ultraligero con autenticación JWT y rate limiting integrado. Zero-config, máximo performance.</div>
-      <div class="proj-meta">
-        <span>⭐ 142</span>
-        <span>🍴 38</span>
-        <span>📄 MIT</span>
-      </div>
-    </div>
-
-    <div class="proj-card">
-      <div class="proj-header">
-        <span class="proj-icon">🧠</span>
-        <span class="proj-lang"><span class="lang-dot" style="background:#3776ab"></span> Python</span>
-      </div>
-      <div class="proj-name">mlops-pipeline</div>
-      <div class="proj-desc">Pipeline end-to-end para entrenamiento y despliegue de modelos. Integración nativa con MLflow y Kubernetes.</div>
-      <div class="proj-meta">
-        <span>⭐ 67</span>
-        <span>🍴 21</span>
-        <span>📄 Apache 2.0</span>
-      </div>
-    </div>
-
-    <div class="proj-card">
-      <div class="proj-header">
-        <span class="proj-icon">⚡</span>
-        <span class="proj-lang"><span class="lang-dot" style="background:#dea584"></span> Rust</span>
-      </div>
-      <div class="proj-name">fastcache-rs</div>
-      <div class="proj-desc">Caché en memoria con TTL, LRU eviction y soporte para clustering. Benchmarks 3x más rápido que Redis en latencia p99.</div>
-      <div class="proj-meta">
-        <span>⭐ 38</span>
-        <span>🍴 9</span>
-        <span>📄 MIT</span>
-      </div>
-    </div>
-  </div>
+ 
 
   <!-- ── CONTRIBUTION GRAPH ── -->
   <p class="section-title">// Contribuciones este año</p>
@@ -617,7 +556,7 @@
   <!-- ── CONTACT ── -->
   <p class="section-title">// Contacto</p>
   <div class="contact-row">
-    <a class="contact-btn primary" href="mailto:pablo@example.com">
+    <a class="contact-btn primary" href="mailto:alcodoripa@gmail.com">
       ✉️ pablo@example.com
     </a>
     <a class="contact-btn" href="https://linkedin.com" target="_blank">
@@ -633,9 +572,154 @@
 
 </div>
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Star of Life 3D</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="500" height="500"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+canvas.style.width  = '500px';
+canvas.style.height = '500px';
+
+let angleY = 0;
+const angleX = 15 * Math.PI / 180;
+const DEPTH = 26;
+const FOV = 600;
+const cx = 250, cy = 250;
+
+// Star of life points (6-arm cross star)
+const R = 140, r = 58;
+const pts2D = [];
+for (let i = 0; i < 6; i++) {
+  const outerA = (i * 60 - 90) * Math.PI / 180;
+  const inner1A = (i * 60 - 60) * Math.PI / 180;
+  pts2D.push({ x: R * Math.cos(outerA), y: R * Math.sin(outerA) });
+  pts2D.push({ x: r * Math.cos(inner1A), y: r * Math.sin(inner1A) });
+}
+
+function project(x, y, z) {
+  const scale = FOV / (FOV + z);
+  return { x: cx + x * scale, y: cy + y * scale, s: scale };
+}
+
+function xform(x3, y3, z3) {
+  const cosY = Math.cos(angleY), sinY = Math.sin(angleY);
+  const cosX = Math.cos(angleX), sinX = Math.sin(angleX);
+  let x2 = x3 * cosY - z3 * sinY;
+  let z2 = x3 * sinY + z3 * cosY;
+  let y2 = y3 * cosX - z2 * sinX;
+  let z3f = y3 * sinX + z2 * cosX;
+  return project(x2, y2, z3f);
+}
+
+function drawStarPath(projPts) {
+  ctx.beginPath();
+  ctx.moveTo(projPts[0].x, projPts[0].y);
+  for (let i = 1; i < projPts.length; i++)
+    ctx.lineTo(projPts[i].x, projPts[i].y);
+  ctx.closePath();
+}
+
+function drawFrame() {
+  ctx.clearRect(0, 0, 500, 500);
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, 500, 500);
+
+  const cosY = Math.cos(angleY);
+  const sinY = Math.sin(angleY);
+  const cosX = Math.cos(angleX);
+
+  const frontPts = pts2D.map(p => xform(p.x, p.y,  DEPTH));
+  const backPts  = pts2D.map(p => xform(p.x, p.y, -DEPTH));
+  const showFront = cosY >= 0;
+
+  // Side faces
+  const n = pts2D.length;
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    const p0 = pts2D[i], p1 = pts2D[j];
+
+    // Edge outward normal
+    const enx = p1.y - p0.y;
+    const eny = -(p1.x - p0.x);
+    const len = Math.sqrt(enx*enx + eny*eny) || 1;
+    const nx = enx / len, ny = eny / len;
+
+    // Rotate normal with Y rotation to get world normal
+    const nx_world = nx * cosY;
+    const dot = nx_world; // dot with view (0,0,1) simplified
+
+    if (dot < 0) continue;
+
+    const brightness = 0.3 + 0.7 * dot;
+    const g = Math.round(168 * brightness);
+    const b = Math.round(181 * brightness);
+
+    const f0 = frontPts[i], f1 = frontPts[j];
+    const b0 = backPts[i],  b1 = backPts[j];
+
+    ctx.beginPath();
+    ctx.moveTo(f0.x, f0.y);
+    ctx.lineTo(f1.x, f1.y);
+    ctx.lineTo(b1.x, b1.y);
+    ctx.lineTo(b0.x, b0.y);
+    ctx.closePath();
+    ctx.fillStyle = `rgb(0,${g},${b})`;
+    ctx.fill();
+  }
+
+  // Back face
+  if (!showFront) {
+    drawStarPath(backPts);
+    ctx.fillStyle = '#006f78';
+    ctx.fill();
+  }
+
+  // Front face with glow
+  drawStarPath(frontPts);
+  ctx.fillStyle = '#00a8b5';
+  ctx.fill();
+
+  // Glow
+  ctx.save();
+  drawStarPath(frontPts);
+  ctx.shadowColor = '#00e5f5';
+  ctx.shadowBlur = 40;
+  ctx.fillStyle = 'rgba(0,200,220,0.18)';
+  ctx.fill();
+  ctx.restore();
+
+  angleY += 0.018;
+  requestAnimationFrame(drawFrame);
+}
+
+drawFrame();
+</script>
+</body>
+</html>
+
+  
 <!-- ── FOOTER ── -->
 <footer>
-  <div>Hecho con <span class="heart">♥</span> y mucho café ☕ por Pablo</div>
+
+  
   <div style="margin-top:4px">© 2026 · Ingeniero de Software</div>
 </footer>
 
