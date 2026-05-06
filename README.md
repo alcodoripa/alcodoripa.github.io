@@ -1,1 +1,657 @@
 # alcodoripa.github.io
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pablo · Engineer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Clash+Display:wght@400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --card: #16161f;
+      --border: #2a2a3a;
+      --accent: #00f5a0;
+      --accent2: #7c3aed;
+      --accent3: #f59e0b;
+      --text: #e8e8f0;
+      --muted: #6b6b8a;
+      --glow: 0 0 40px rgba(0, 245, 160, 0.15);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Grid noise texture ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,245,160,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,245,160,.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Animated orbs ── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: .25;
+      pointer-events: none;
+      z-index: 0;
+      animation: float 10s ease-in-out infinite;
+    }
+    .orb1 { width: 500px; height: 500px; background: var(--accent2); top: -150px; right: -100px; animation-delay: 0s; }
+    .orb2 { width: 350px; height: 350px; background: var(--accent); bottom: -100px; left: -80px; animation-delay: -4s; }
+    .orb3 { width: 250px; height: 250px; background: var(--accent3); top: 50%; left: 40%; animation-delay: -7s; }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(20px, -30px) scale(1.05); }
+      66% { transform: translate(-15px, 20px) scale(.97); }
+    }
+
+    /* ── Layout ── */
+    .page { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 60px 24px 100px; }
+
+    /* ── Header ── */
+    header {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 32px;
+      align-items: center;
+      margin-bottom: 64px;
+      animation: slideDown .8s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .avatar-wrap {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      flex-shrink: 0;
+    }
+
+    /* Animated ring */
+    .avatar-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: conic-gradient(var(--accent), var(--accent2), var(--accent3), var(--accent));
+      animation: spin 4s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .avatar-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 52px;
+      z-index: 1;
+      overflow: hidden;
+      border: 3px solid var(--bg);
+    }
+
+    /* Use a pixel art / bitmoji-style avatar via DiceBear */
+    .avatar-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .header-text { display: flex; flex-direction: column; gap: 8px; }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(0,245,160,.08);
+      border: 1px solid rgba(0,245,160,.2);
+      padding: 4px 10px;
+      border-radius: 100px;
+      width: fit-content;
+    }
+
+    .badge-status .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0,245,160,.6); }
+      50%       { box-shadow: 0 0 0 5px rgba(0,245,160,0); }
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -.02em;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, var(--accent) 0%, #00c2ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-family: 'Space Mono', monospace;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    .subtitle .highlight { color: var(--accent3); }
+
+    /* ── Typing animation ── */
+    .typing-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .8rem;
+      color: var(--muted);
+    }
+
+    .typing {
+      color: var(--accent);
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid var(--accent);
+      animation: typing 3s steps(30,end) infinite, blink .7s step-end infinite alternate;
+      width: 0;
+    }
+
+    @keyframes typing {
+      0%   { width: 0; }
+      50%  { width: 18ch; }
+      80%  { width: 18ch; }
+      100% { width: 0; }
+    }
+    @keyframes blink {
+      from { border-color: var(--accent); }
+      to   { border-color: transparent; }
+    }
+
+    /* ── Stats bar ── */
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 48px;
+      animation: fadeUp .8s .2s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .stat-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: .78rem;
+      transition: border-color .2s, transform .2s;
+    }
+
+    .stat-chip:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .stat-chip .icon { font-size: 1.1rem; }
+    .stat-chip .val { color: var(--accent); font-weight: 700; }
+
+    /* ── Section titles ── */
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: .65rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Skill grid ── */
+    .skills-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 48px;
+      animation: fadeUp .8s .3s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .skill-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: .78rem;
+      border: 1px solid var(--border);
+      background: var(--card);
+      cursor: default;
+      transition: all .2s;
+    }
+
+    .skill-tag:hover {
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.4);
+    }
+
+    .skill-tag.hot  { border-color: rgba(0,245,160,.3); color: var(--accent); }
+    .skill-tag.cool { border-color: rgba(124,58,237,.4); color: #a78bfa; }
+    .skill-tag.warm { border-color: rgba(245,158,11,.3); color: var(--accent3); }
+
+    /* ── Project cards ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+      animation: fadeUp .8s .4s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .proj-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      transition: all .25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .proj-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0,245,160,.04) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .proj-card:hover { border-color: rgba(0,245,160,.35); transform: translateY(-4px); box-shadow: var(--glow); }
+    .proj-card:hover::before { opacity: 1; }
+
+    .proj-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .proj-icon { font-size: 1.5rem; }
+    .proj-lang { font-size: .7rem; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+    .lang-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    .proj-name {
+      font-family: 'Syne', sans-serif;
+      font-size: .95rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .proj-desc { font-size: .75rem; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
+
+    .proj-meta { display: flex; gap: 12px; font-size: .72rem; color: var(--muted); }
+    .proj-meta span { display: flex; align-items: center; gap: 4px; }
+
+    /* ── Contribution graph ── */
+    .contrib-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 48px;
+      animation: fadeUp .8s .5s cubic-bezier(.16,1,.3,1) both;
+      overflow: hidden;
+    }
+
+    .contrib-grid {
+      display: grid;
+      grid-template-columns: repeat(52, 1fr);
+      gap: 3px;
+      margin-top: 16px;
+    }
+
+    .contrib-day {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 2px;
+      background: var(--border);
+      transition: transform .1s;
+    }
+
+    .contrib-day:hover { transform: scale(1.5); z-index: 2; }
+    .contrib-day.l1 { background: rgba(0,245,160,.25); }
+    .contrib-day.l2 { background: rgba(0,245,160,.5); }
+    .contrib-day.l3 { background: rgba(0,245,160,.75); }
+    .contrib-day.l4 { background: rgba(0,245,160,1); }
+
+    /* ── GIF showcase ── */
+    .gif-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 48px;
+      animation: fadeUp .8s .6s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .gif-card {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      position: relative;
+      aspect-ratio: 16/9;
+      background: var(--card);
+    }
+
+    .gif-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gif-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 6px 10px;
+      background: rgba(0,0,0,.7);
+      font-size: .65rem;
+      color: var(--accent);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      backdrop-filter: blur(4px);
+    }
+
+    /* ── Contact ── */
+    .contact-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      animation: fadeUp .8s .7s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .contact-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      text-decoration: none;
+      font-family: 'Space Mono', monospace;
+      font-size: .8rem;
+      transition: all .2s;
+      cursor: pointer;
+    }
+
+    .contact-btn.primary {
+      background: var(--accent);
+      color: #0a0a0f;
+      font-weight: 700;
+      border-color: var(--accent);
+    }
+
+    .contact-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+    .contact-btn.primary:hover { box-shadow: 0 8px 32px rgba(0,245,160,.3); }
+
+    /* ── Snake animation (purely CSS) ── */
+    .snake-wrap {
+      margin-bottom: 48px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 16px;
+      animation: fadeUp .8s .55s cubic-bezier(.16,1,.3,1) both;
+      text-align: center;
+    }
+
+    .snake-img { width: 100%; max-width: 800px; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      margin-top: 80px;
+      color: var(--muted);
+      font-size: .72rem;
+      line-height: 2;
+    }
+
+    footer .heart { color: #f43f5e; animation: heartbeat 1.2s ease-in-out infinite; display: inline-block; }
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.25); }
+    }
+
+    @media (max-width: 600px) {
+      header { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+      .gif-row { grid-template-columns: 1fr 1fr; }
+      .contrib-grid { grid-template-columns: repeat(26, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<div class="page">
+
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="avatar-wrap">
+      <div class="avatar-inner">
+        <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=pablo&backgroundColor=0a0a0f&primaryColor=00f5a0" alt="Pablo avatar" />
+      </div>
+    </div>
+    <div class="header-text">
+      <div class="badge-status"><span class="dot"></span>Disponible para proyectos</div>
+      <h1>Hola, soy <span>Pablo</span> 👋</h1>
+      <p class="subtitle">Ingeniero de Software · <span class="highlight">Full Stack</span> · Builder</p>
+      <div class="typing-wrap">
+        <span>→</span>
+        <span class="typing">Building cool stuff</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── STATS ── -->
+  <div class="stats-row">
+    <div class="stat-chip"><span class="icon">⭐</span><span class="val">247</span> stars</div>
+    <div class="stat-chip"><span class="icon">🍴</span><span class="val">89</span> forks</div>
+    <div class="stat-chip"><span class="icon">📦</span><span class="val">32</span> repos</div>
+    <div class="stat-chip"><span class="icon">👥</span><span class="val">1.2k</span> followers</div>
+    <div class="stat-chip"><span class="icon">🔥</span><span class="val">365</span>-day streak</div>
+  </div>
+
+  <!-- ── SKILLS ── -->
+  <p class="section-title">// Stack tecnológico</p>
+  <div class="skills-grid">
+    <span class="skill-tag hot">⚡ TypeScript</span>
+    <span class="skill-tag hot">⚛️ React</span>
+    <span class="skill-tag hot">🐍 Python</span>
+    <span class="skill-tag hot">🦀 Rust</span>
+    <span class="skill-tag cool">🐘 PostgreSQL</span>
+    <span class="skill-tag cool">🐳 Docker</span>
+    <span class="skill-tag cool">☸️ Kubernetes</span>
+    <span class="skill-tag cool">🔷 GraphQL</span>
+    <span class="skill-tag warm">☁️ AWS</span>
+    <span class="skill-tag warm">🔥 Firebase</span>
+    <span class="skill-tag warm">🤖 ML / AI</span>
+    <span class="skill-tag warm">🧠 LLMs</span>
+  </div>
+
+  <!-- ── GIF SHOWCASE ── -->
+  <p class="section-title">// En modo flujo</p>
+  <div class="gif-row">
+    <div class="gif-card">
+      <img src="https://media.giphy.com/media/L1R1tvI9svkIWwpVYr/giphy.gif" alt="coding gif" />
+      <div class="gif-label">Coding 24/7</div>
+    </div>
+    <div class="gif-card">
+      <img src="https://media.giphy.com/media/ZVik7pIojecu0/giphy.gif" alt="matrix gif" />
+      <div class="gif-label">The Matrix</div>
+    </div>
+    <div class="gif-card">
+      <img src="https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" alt="hacking gif" />
+      <div class="gif-label">Deploy → Prod</div>
+    </div>
+  </div>
+
+  <!-- ── PROJECTS ── -->
+  <p class="section-title">// Proyectos destacados</p>
+  <div class="projects-grid">
+    <div class="proj-card">
+      <div class="proj-header">
+        <span class="proj-icon">🚀</span>
+        <span class="proj-lang"><span class="lang-dot" style="background:#3178c6"></span> TypeScript</span>
+      </div>
+      <div class="proj-name">pablo-api-core</div>
+      <div class="proj-desc">Framework REST ultraligero con autenticación JWT y rate limiting integrado. Zero-config, máximo performance.</div>
+      <div class="proj-meta">
+        <span>⭐ 142</span>
+        <span>🍴 38</span>
+        <span>📄 MIT</span>
+      </div>
+    </div>
+
+    <div class="proj-card">
+      <div class="proj-header">
+        <span class="proj-icon">🧠</span>
+        <span class="proj-lang"><span class="lang-dot" style="background:#3776ab"></span> Python</span>
+      </div>
+      <div class="proj-name">mlops-pipeline</div>
+      <div class="proj-desc">Pipeline end-to-end para entrenamiento y despliegue de modelos. Integración nativa con MLflow y Kubernetes.</div>
+      <div class="proj-meta">
+        <span>⭐ 67</span>
+        <span>🍴 21</span>
+        <span>📄 Apache 2.0</span>
+      </div>
+    </div>
+
+    <div class="proj-card">
+      <div class="proj-header">
+        <span class="proj-icon">⚡</span>
+        <span class="proj-lang"><span class="lang-dot" style="background:#dea584"></span> Rust</span>
+      </div>
+      <div class="proj-name">fastcache-rs</div>
+      <div class="proj-desc">Caché en memoria con TTL, LRU eviction y soporte para clustering. Benchmarks 3x más rápido que Redis en latencia p99.</div>
+      <div class="proj-meta">
+        <span>⭐ 38</span>
+        <span>🍴 9</span>
+        <span>📄 MIT</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CONTRIBUTION GRAPH ── -->
+  <p class="section-title">// Contribuciones este año</p>
+  <div class="contrib-wrap">
+    <div style="font-size:.72rem; color:var(--muted)">1,847 contribuciones en el último año</div>
+    <div class="contrib-grid" id="contrib"></div>
+    <div style="margin-top:8px; display:flex; align-items:center; gap:6px; font-size:.65rem; color:var(--muted);">
+      Menos <div class="contrib-day" style="width:10px;height:10px;border-radius:2px;display:inline-block;flex-shrink:0"></div>
+      <div class="contrib-day l1" style="width:10px;height:10px;border-radius:2px;display:inline-block;flex-shrink:0"></div>
+      <div class="contrib-day l2" style="width:10px;height:10px;border-radius:2px;display:inline-block;flex-shrink:0"></div>
+      <div class="contrib-day l3" style="width:10px;height:10px;border-radius:2px;display:inline-block;flex-shrink:0"></div>
+      <div class="contrib-day l4" style="width:10px;height:10px;border-radius:2px;display:inline-block;flex-shrink:0"></div>
+      Más
+    </div>
+  </div>
+
+  <!-- ── SNAKE ANIMATION (GitHub README style) ── -->
+  <p class="section-title">// Snake come mis commits</p>
+  <div class="snake-wrap">
+    <img class="snake-img"
+         src="https://raw.githubusercontent.com/platane/snk/output/github-contribution-grid-snake-dark.svg"
+         alt="snake animation" />
+  </div>
+
+  <!-- ── CONTACT ── -->
+  <p class="section-title">// Contacto</p>
+  <div class="contact-row">
+    <a class="contact-btn primary" href="mailto:pablo@example.com">
+      ✉️ pablo@example.com
+    </a>
+    <a class="contact-btn" href="https://linkedin.com" target="_blank">
+      💼 LinkedIn
+    </a>
+    <a class="contact-btn" href="https://twitter.com" target="_blank">
+      🐦 Twitter / X
+    </a>
+    <a class="contact-btn" href="https://github.com" target="_blank">
+      🐙 GitHub
+    </a>
+  </div>
+
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div>Hecho con <span class="heart">♥</span> y mucho café ☕ por Pablo</div>
+  <div style="margin-top:4px">© 2026 · Ingeniero de Software</div>
+</footer>
+
+<script>
+  // Generate contribution graph
+  const grid = document.getElementById('contrib');
+  const levels = ['', 'l1', 'l2', 'l3', 'l4'];
+  for (let i = 0; i < 52 * 7; i++) {
+    const day = document.createElement('div');
+    day.className = 'contrib-day';
+    const r = Math.random();
+    if (r > .6) day.classList.add(levels[Math.floor(Math.random() * 4) + 1]);
+    grid.appendChild(day);
+  }
+</script>
+
+</body>
+</html>
